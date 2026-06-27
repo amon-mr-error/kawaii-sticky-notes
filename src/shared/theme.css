@@ -1,0 +1,146 @@
+/* Kawaii Sticky Notes — shared design tokens
+   Palette pulled from the Kawaii Notes board reference: warm cream app
+   background, cork-brown board, and soft pastel note cards. */
+
+@font-face {
+  font-family: 'Baloo 2';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('../../assets/fonts/baloo2/baloo-2-latin-700-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Baloo 2';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../../assets/fonts/baloo2/baloo-2-latin-600-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Baloo 2';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../../assets/fonts/baloo2/baloo-2-latin-500-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Baloo 2';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../../assets/fonts/baloo2/baloo-2-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../../assets/fonts/nunito/nunito-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Nunito';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../../assets/fonts/nunito/nunito-latin-400-italic.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../../assets/fonts/nunito/nunito-latin-600-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../../assets/fonts/nunito/nunito-latin-700-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('../../assets/fonts/nunito/nunito-latin-800-normal.woff2') format('woff2');
+}
+
+:root {
+  /* App chrome */
+  --app-cream: #fdf3ea;
+  --app-cream-soft: #fffaf4;
+  --board-tan: #cda36f;
+  --board-tan-dark: #b88c58;
+  --ink: #5b3a2e;
+  --ink-soft: #8a6a5b;
+  --ink-faint: #b89c8e;
+  --line: #f0e0d2;
+
+  --brand-pink: #f29ec4;
+  --brand-pink-dark: #e87fae;
+
+  /* Note palette: bg / border / accent-text */
+  --pink-bg: #fbdce8;
+  --pink-border: #f3aecb;
+  --pink-text: #99465f;
+
+  --lavender-bg: #ddd7f8;
+  --lavender-border: #b9adf0;
+  --lavender-text: #5c4f9c;
+
+  --mint-bg: #cdf0d6;
+  --mint-border: #9adfac;
+  --mint-text: #357a4d;
+
+  --peach-bg: #ffe7d3;
+  --peach-border: #ffc59b;
+  --peach-text: #a35e2a;
+
+  --sky-bg: #d2e9fa;
+  --sky-border: #a4cdef;
+  --sky-text: #386490;
+
+  --lemon-bg: #fbf0c2;
+  --lemon-border: #f0dd8a;
+  --lemon-text: #93792a;
+
+  --shadow-note: 0 10px 24px rgba(120, 84, 56, 0.18), 0 2px 6px rgba(120, 84, 56, 0.12);
+  --shadow-pop: 0 14px 32px rgba(120, 84, 56, 0.22);
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+
+  --font-display: 'Baloo 2', 'Segoe UI Rounded', system-ui, sans-serif;
+  --font-body: 'Nunito', 'Segoe UI', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: var(--brand-pink); color: white; }
+
+button {
+  font-family: var(--font-body);
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: inherit;
+}
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--brand-pink-dark);
+  outline-offset: 2px;
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(180, 140, 110, 0.35);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(180, 140, 110, 0.55); }

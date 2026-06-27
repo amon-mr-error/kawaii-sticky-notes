@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Kawaii Sticky Notes</title>
+  <link rel="stylesheet" href="../shared/theme.css" />
+  <link rel="stylesheet" href="overview.css" />
+</head>
+<body>
+  <div class="panel">
+    <!-- Draggable top bar -->
+    <header class="top-bar" id="top-bar">
+      <span class="brand">🍡 Kawaii Notes</span>
+      <div class="bar-spacer"></div>
+      <button class="tb-icon" id="new-note-btn" title="New note (Ctrl+Alt+N)">
+        <svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg>
+      </button>
+      <button class="tb-icon close-icon" id="win-close-btn" title="Close">
+        <svg viewBox="0 0 24 24" width="14" height="14"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg>
+      </button>
+    </header>
+
+    <!-- Search -->
+    <div class="search-bar">
+      <svg viewBox="0 0 24 24" width="14" height="14" class="search-icon"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <input id="search-input" type="text" placeholder="Search notes…" autocomplete="off" />
+    </div>
+
+    <!-- Filter tabs -->
+    <nav class="filter-tabs" id="nav-list">
+      <button class="filter-tab active" data-view="all">All</button>
+      <button class="filter-tab" data-view="favorites">★ Favs</button>
+      <button class="filter-tab" data-view="archived">Archived</button>
+      <button class="filter-tab" data-view="trash">Trash</button>
+    </nav>
+
+    <!-- Notes list -->
+    <div class="notes-list" id="note-list">
+      <!-- dynamically populated -->
+    </div>
+
+    <!-- Empty state -->
+    <div class="empty-state" id="empty-state" hidden>
+      <div class="empty-emoji">🌸</div>
+      <div class="empty-text" id="empty-text">No notes yet</div>
+    </div>
+
+    <!-- Trash actions -->
+    <div class="trash-bar" id="trash-actions" hidden>
+      <button id="empty-trash-btn">🗑️ Empty Trash</button>
+    </div>
+  </div>
+
+  <script src="overview.js"></script>
+</body>
+</html>
