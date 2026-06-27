@@ -1,119 +1,84 @@
 # Kawaii Sticky Notes 🍡
 
-A desktop Sticky Notes app for Linux with all the core functionality of
-Windows' Sticky Notes — multiple floating notes, rich text, checklists,
-images, colors, favorites, archive & trash — wrapped in a cute pastel
-"kawaii" look.
+A desktop Sticky Notes app for Linux and macOS with all the core functionality of Windows' Sticky Notes — multiple floating notes, rich text, checklists, images, colors, favorites, archive & trash — wrapped in a cute pastel "kawaii" look, now featuring **interactive desktop pets**!
 
-![A pink sticky note with a checklist](docs/screenshot-note.png?v=2)
+![A pink sticky note with a desktop pet](docs/screenshot-note.png?v=2)
 ![The All Notes cork-board overview](docs/screenshot-board.png?v=2)
 
-## Features
+## ✨ Features
 
-- **Floating sticky notes** — each note is its own small, frameless,
-  rounded, draggable window, just like Windows Sticky Notes.
+- **Floating sticky notes** — each note is its own small, frameless, rounded, draggable window, just like native Sticky Notes.
+- **Companion Desktop Pets (NEW!)** — Every note gets a cute, randomly assigned companion GIF (like Bocchi!) that floats alongside it. They are interactive, draggable, and perfectly persistent.
 - **Rich text** — bold, italic, underline, strikethrough.
-- **Checklists** — click the checklist button to add tickable to‑do items;
-  checking one strikes it through. Press Enter for a new item, Backspace on
-  an empty item to remove it.
-- **Bulleted lists.**
-- **Images** — insert via the toolbar button, or drag a picture straight
-  onto a note.
+- **Checklists** — click the checklist button to add tickable to‑do items.
+- **Images** — insert via the toolbar button, or drag a picture straight onto a note.
 - **6 pastel colors** per note (pink, lavender, mint, peach, sky, lemon).
-- **Favorites** — star any note.
-- **Archive & Trash** — archive notes you don't need on screen, or trash
-  them (with confirmation if they have content). Restore or permanently
-  delete from Trash any time.
+- **Favorites & Archive** — star any note, or archive the ones you don't need on screen.
 - **"Keep on top"** — pin an individual note above other windows.
-- **All Notes board** — a cork‑board style overview of every note, with a
-  sidebar for All Notes / Favorites / Archived / Trash, and a search box.
-- **System tray icon** — quick "New Note" / "Show All Notes" / "Quit", and
-  the app keeps running in the tray even with no notes open, like the real
-  Sticky Notes.
-- **Global shortcut** — <kbd>Ctrl+Alt+N</kbd> creates a new note from
-  anywhere.
-- Notes autosave locally to a JSON file — nothing leaves your machine, no
-  account, no sync.
+- **All Notes board** — a cork‑board style overview of every note, with a sidebar for All Notes / Favorites / Archived / Trash. (Auto-minimizes when you open or interact with a note!)
+- **System tray icon** — keeps the app running quietly in the background.
 
-## Requirements
+## 💻 Requirements
 
-- Linux (tested for X11/Wayland desktops with a compositor — GNOME, KDE,
-  XFCE, Cinnamon, etc. all work; window transparency/shadow quality depends
-  on your compositor).
-- [Node.js](https://nodejs.org) 18 or newer (includes npm).
+- **Linux**: Tested on X11/Wayland desktops with a compositor (GNOME, KDE, XFCE, Cinnamon, etc.).
+- **macOS**: macOS 10.13 (High Sierra) or later.
+- [Node.js](https://nodejs.org) 18 or newer (includes npm) to build from source.
 
-## Run it (development mode)
+## 🚀 Installation & Build
 
+### macOS Installation 🍏
+To build the macOS app (`.dmg` and `.zip`):
 ```bash
+npm install
+npm run dist:mac
+```
+After building, you will find the `.dmg` file in the `release/` folder. 
+1. Double-click the `.dmg` file.
+2. Drag **Kawaii Sticky Notes** to your `Applications` folder.
+3. Launch it from Launchpad or Spotlight!
+
+*(Note: On first launch, you might need to Right-Click -> Open depending on your Gatekeeper settings since the app isn't signed).*
+
+### Linux Installation 🐧
+This packages everything into a single app you can install or run on any Linux machine.
+```bash
+npm install
+npm run dist:linux
+```
+After building in the `release/` folder:
+- **AppImage**: `chmod +x release/*.AppImage` then double‑click it. *(Linux user-namespace sandbox issues are automatically handled by the bundled wrapper!)*
+- **.deb**: `sudo apt install ./release/*.deb` (or `dpkg -i`) to install it system‑wide with a proper entry in your applications menu.
+
+### Development Mode 🛠️
+```bash
+git clone https://github.com/amon-mr-error/kawaii-sticky-notes.git
 cd kawaii-sticky-notes
 npm install
 npm start
 ```
-
 That's it — the app will start in your system tray with a welcome note.
 
-## Build a Linux installer (AppImage / .deb)
+## 📂 Data Privacy & Storage
 
-This packages everything into a single app you can install or run on any
-Linux machine, no Node.js required by the end user.
+Notes are saved locally as plain JSON. **Nothing leaves your machine, no account, no sync.**
+- **Linux**: `~/.config/kawaii-sticky-notes/notes.json`
+- **macOS**: `~/Library/Application Support/kawaii-sticky-notes/notes.json`
 
-```bash
-npm run dist            # builds both AppImage and .deb into ./release
-npm run dist:appimage   # AppImage only
-npm run dist:deb        # .deb only
-```
+Back this file up or copy it to another machine to carry your notes over.
 
-After building:
+## 🏗️ Project Layout
 
-- **AppImage**: `chmod +x release/*.AppImage` then double‑click it, or run
-  it from a terminal. Optionally drop it somewhere permanent like
-  `~/Applications/`.
-- **.deb**: `sudo apt install ./release/*.deb` (or `dpkg -i`) to install it
-  system‑wide with a proper entry in your applications menu.
+- `main.js` → Electron main process: windows, tray, IPC, persistence. Includes Linux sandbox fixes.
+- `preload.js` → secure bridge exposing APIs to renderers.
+- `src/store.js` → tiny JSON-file backed notes "database".
+- `src/note/` → an individual sticky-note window (HTML/CSS/JS).
+- `src/gif/` → companion desktop pet window.
+- `src/overview/` → the "All Notes" cork-board window.
+- `src/shared/theme.css` → shared design tokens, color palette, fonts.
+- `assets/` → bundled fonts, desktop pet GIFs, and app icons.
+- `scripts/` → build scripts, including the Linux `--no-sandbox` wrapper.
 
-> The very first `npm install` needs internet access to download Electron
-> itself (~150 MB) — that part can't be avoided, but everything else
-> (fonts, icons) is already bundled in the project so the app works fully
-> offline afterwards.
+## 🎨 Tinkering
 
-## Where your notes are stored
-
-Notes are saved as plain JSON at:
-
-```
-~/.config/kawaii-sticky-notes/notes.json
-```
-
-(That's Electron's standard per‑app `userData` folder on Linux.) Back this
-file up or copy it to another machine to carry your notes over — there's
-no cloud sync built in.
-
-## Project layout
-
-```
-main.js                 → Electron main process: windows, tray, IPC, persistence
-preload.js               → secure bridge exposing notesAPI / windowAPI to renderers
-src/store.js              → tiny JSON-file backed notes "database"
-src/note/                → an individual sticky-note window (HTML/CSS/JS)
-src/overview/             → the "All Notes" cork-board window (HTML/CSS/JS)
-src/shared/theme.css      → shared design tokens, color palette, fonts
-assets/                  → bundled fonts (Baloo 2 + Nunito) and icons
-build/icon.png           → 1024×1024 app icon used by electron-builder
-scripts/make_icons.py    → regenerates the icon set if you want to tweak it
-```
-
-## Notes on the design
-
-Colors, layout and type are modeled on the "Kawaii Notes" board reference
-you provided — warm cream backgrounds, a cork‑board overview, soft pastel
-note cards, and the "Sticky Joy" sidebar branding. Fonts (Baloo 2 for
-headings, Nunito for body text) are bundled locally as `.woff2` files so
-the app never needs internet access to render correctly.
-
-## Tinkering
-
-- Note colors live in `src/shared/theme.css` as CSS variables — add a 7th
-  color by adding a `--mycolor-bg/border/text` triplet there, a
-  `.note[data-color="mycolor"]` rule in `note.css`/`overview.css`, and a
-  swatch button in `note.html`.
-- Keyboard shortcut is registered in `main.js` via `globalShortcut.register`.
+- Note colors live in `src/shared/theme.css` as CSS variables. You can easily add a 7th color!
+- Keyboard shortcut `<kbd>Ctrl+Alt+N</kbd>` (or `<kbd>Cmd+Option+N</kbd>` on Mac) is registered in `main.js` via `globalShortcut.register`.
