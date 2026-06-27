@@ -5,8 +5,8 @@ Windows' Sticky Notes — multiple floating notes, rich text, checklists,
 images, colors, favorites, archive & trash — wrapped in a cute pastel
 "kawaii" look.
 
-![A pink sticky note with a checklist](docs/screenshot-note.png)
-![The All Notes cork-board overview](docs/screenshot-board.png)
+![A pink sticky note with a checklist](docs/screenshot-note.png?v=2)
+![The All Notes cork-board overview](docs/screenshot-board.png?v=2)
 
 ## Features
 
