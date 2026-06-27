@@ -3,6 +3,11 @@ const path = require('path');
 const fs = require('fs');
 const { NoteStore } = require('./src/store');
 
+// Disable sandbox to prevent crashes on newer Linux distributions (like Ubuntu 24.04+)
+if (process.platform === 'linux') {
+  app.commandLine.appendSwitch('no-sandbox');
+}
+
 // Ensure only a single instance runs. If user tries to launch again,
 // we bring the overview window to the front instead of silently exiting.
 const gotLock = app.requestSingleInstanceLock();
@@ -25,6 +30,7 @@ let store;
 let tray = null;
 let overviewWindow = null;
 const noteWindows = new Map(); // id -> BrowserWindow
+const gifWindows = new Map(); // id -> BrowserWindow
 
 const ICON_PATH = path.join(__dirname, 'assets', 'icon.png');
 const TRAY_ICON_PATH = path.join(__dirname, 'assets', 'tray-icon.png');
@@ -64,8 +70,8 @@ function createNoteWindow(note) {
     height: note.height || NOTE_DEFAULT_HEIGHT,
     minWidth: 200,
     minHeight: 180,
-    x: pos.x,
-    y: pos.y,
+    x: Math.round(pos.x),
+    y: Math.round(pos.y),
     frame: false,
     transparent: true,
     hasShadow: true,
@@ -95,6 +101,12 @@ function createNoteWindow(note) {
     const [x, y] = win.getPosition();
     const [width, height] = win.getSize();
     store.update(note.id, { x, y, width, height });
+
+    // Move the GIF window alongside the note window
+    const gifWin = gifWindows.get(note.id);
+    if (gifWin && !gifWin.isDestroyed()) {
+      gifWin.setPosition(Math.round(x - 120), Math.round(y + (height / 2) - 70));
+    }
   };
 
   win.on('moved', persistBounds);
@@ -108,9 +120,52 @@ function createNoteWindow(note) {
       store.update(note.id, { isOpen: false });
       broadcastToOverview('notes:changed', store.getAll());
     }
+    
+    // Also close the associated GIF window
+    const gifWin = gifWindows.get(note.id);
+    if (gifWin && !gifWin.isDestroyed()) {
+      gifWin.destroy();
+    }
+    gifWindows.delete(note.id);
   });
 
   noteWindows.set(note.id, win);
+
+  // --- Create companion GIF window ---
+  if (note.gifAsset && !gifWindows.has(note.id)) {
+    const isLinux = process.platform === 'linux';
+    const noteW = note.width || NOTE_DEFAULT_WIDTH;
+    const noteH = note.height || NOTE_DEFAULT_HEIGHT;
+    
+    const gifWin = new BrowserWindow({
+      width: 140,
+      height: 140,
+      // Position the GIF slightly to the left of the note
+      x: Math.round(pos.x - 120),
+      y: Math.round(pos.y + (noteH / 2) - 70),
+      frame: false,
+      transparent: true,
+      hasShadow: false,
+      resizable: false,
+      skipTaskbar: true,
+      show: false,
+      backgroundColor: '#00000000',
+      webPreferences: {
+        contextIsolation: true,
+        nodeIntegration: false,
+      },
+    });
+
+    if (note.pinned) gifWin.setAlwaysOnTop(true);
+
+    gifWin.loadFile(path.join(__dirname, 'src', 'gif', 'gif.html'), {
+      query: { id: note.id, asset: note.gifAsset },
+    });
+
+    gifWin.once('ready-to-show', () => gifWin.show());
+    gifWindows.set(note.id, gifWin);
+  }
+
   return win;
 }
 
@@ -120,6 +175,12 @@ function closeNoteWindow(id) {
     win.destroy();
   }
   noteWindows.delete(id);
+
+  const gifWin = gifWindows.get(id);
+  if (gifWin && !gifWin.isDestroyed()) {
+    gifWin.destroy();
+  }
+  gifWindows.delete(id);
 }
 
 function createOverviewWindow() {
@@ -154,6 +215,12 @@ function newNote(overrides = {}) {
   const note = store.create(overrides);
   createNoteWindow(note);
   broadcastToOverview('notes:changed', store.getAll());
+  
+  // Minimize overview if it is open
+  if (overviewWindow && !overviewWindow.isDestroyed()) {
+    overviewWindow.minimize();
+  }
+  
   return note;
 }
 
@@ -259,6 +326,12 @@ function registerIpc() {
     if (note.trashed) return null;
     store.update(id, { isOpen: true });
     createNoteWindow(store.getById(id));
+    
+    // Minimize overview if it is open
+    if (overviewWindow && !overviewWindow.isDestroyed()) {
+      overviewWindow.minimize();
+    }
+    
     return note;
   });
 
@@ -314,6 +387,10 @@ function registerIpc() {
     const next = !note.pinned;
     const win = noteWindows.get(id);
     if (win && !win.isDestroyed()) win.setAlwaysOnTop(next);
+    
+    const gifWin = gifWindows.get(id);
+    if (gifWin && !gifWin.isDestroyed()) gifWin.setAlwaysOnTop(next);
+    
     store.update(id, { pinned: next });
     return next;
   });

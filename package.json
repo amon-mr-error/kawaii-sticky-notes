@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "Cute pastel sticky notes desktop app, in the style of Windows Sticky Notes",
   "main": "main.js",
-  "author": "You",
+  "author": "Amon <kes.karna12@gmail.com>",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "electron .",
+    "start": "electron . --no-sandbox",
     "dist": "electron-builder",
     "dist:linux": "electron-builder --linux",
     "dist:mac": "electron-builder --mac",
@@ -25,6 +25,7 @@
   "build": {
     "appId": "com.kawaiinotes.app",
     "productName": "Kawaii Sticky Notes",
+    "afterPack": "scripts/afterPack.js",
     "directories": {
       "output": "release"
     },
@@ -40,7 +41,8 @@
       "target": ["AppImage", "deb"],
       "category": "Utility",
       "icon": "build/icon.png",
-      "executableName": "kawaii-sticky-notes"
+      "executableName": "kawaii-sticky-notes",
+      "executableArgs": ["--no-sandbox"]
     },
     "mac": {
       "target": ["dmg", "zip"],

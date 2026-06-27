@@ -10,6 +10,18 @@ const FILE_NAME = 'notes.json';
 
 const DEFAULT_COLORS = ['pink', 'lavender', 'mint', 'peach', 'sky', 'lemon'];
 
+let GIF_FILES = [];
+try {
+  GIF_FILES = fs.readdirSync(path.join(__dirname, '..', 'assets', 'gif')).filter(f => f.endsWith('.gif'));
+} catch (err) {
+  console.warn('Failed to load gif files', err);
+}
+
+function getRandomGif() {
+  if (GIF_FILES.length === 0) return null;
+  return GIF_FILES[Math.floor(Math.random() * GIF_FILES.length)];
+}
+
 function uid() {
   return crypto.randomBytes(8).toString('hex');
 }
@@ -49,7 +61,12 @@ class NoteStore {
   }
 
   getById(id) {
-    return this.data.notes.find((n) => n.id === id) || null;
+    const note = this.data.notes.find((n) => n.id === id) || null;
+    if (note && !note.gifAsset && GIF_FILES.length > 0) {
+      note.gifAsset = getRandomGif();
+      this._save();
+    }
+    return note;
   }
 
   create(overrides = {}) {
@@ -58,6 +75,7 @@ class NoteStore {
     const note = {
       id: uid(),
       color,
+      gifAsset: getRandomGif(),
       html: '',
       favorite: false,
       archived: false,
